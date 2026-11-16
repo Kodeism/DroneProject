@@ -1,0 +1,68 @@
+{
+    "Difficulty": {
+        "lesson_num": 0
+    },
+    "DroneAgent": {
+        "checkpoints": [
+            {
+                "steps": 8499957,
+                "file_path": "results\\curriculumLevel2_run1\\DroneAgent\\DroneAgent-8499957.onnx",
+                "reward": -53.132888434068214,
+                "creation_time": 1793641074.9599528,
+                "auxillary_file_paths": [
+                    "results\\curriculumLevel2_run1\\DroneAgent\\DroneAgent-8499957.pt"
+                ]
+            },
+            {
+                "steps": 8999995,
+                "file_path": "results\\curriculumLevel2_run1\\DroneAgent\\DroneAgent-8999995.onnx",
+                "reward": -52.00986212043352,
+                "creation_time": 1793642269.621983,
+                "auxillary_file_paths": [
+                    "results\\curriculumLevel2_run1\\DroneAgent\\DroneAgent-8999995.pt"
+                ]
+            },
+            {
+                "steps": 9499943,
+                "file_path": "results\\curriculumLevel2_run1\\DroneAgent\\DroneAgent-9499943.onnx",
+                "reward": -52.45698466056432,
+                "creation_time": 1793643463.0954344,
+                "auxillary_file_paths": [
+                    "results\\curriculumLevel2_run1\\DroneAgent\\DroneAgent-9499943.pt"
+                ]
+            },
+            {
+                "steps": 9999978,
+                "file_path": "results\\curriculumLevel2_run1\\DroneAgent\\DroneAgent-9999978.onnx",
+                "reward": -52.92789312850597,
+                "creation_time": 1793644689.6666818,
+                "auxillary_file_paths": [
+                    "results\\curriculumLevel2_run1\\DroneAgent\\DroneAgent-9999978.pt"
+                ]
+            },
+            {
+                "steps": 10035979,
+                "file_path": "results\\curriculumLevel2_run1\\DroneAgent\\DroneAgent-10035979.onnx",
+                "reward": null,
+                "creation_time": 1793644770.4378521,
+                "auxillary_file_paths": [
+                    "results\\curriculumLevel2_run1\\DroneAgent\\DroneAgent-10035979.pt"
+                ]
+            }
+        ],
+        "final_checkpoint": {
+            "steps": 10035979,
+            "file_path": "results\\curriculumLevel2_run1\\DroneAgent.onnx",
+            "reward": null,
+            "creation_time": 1793644770.4378521,
+            "auxillary_file_paths": [
+                "results\\curriculumLevel2_run1\\DroneAgent\\DroneAgent-10035979.pt"
+            ]
+        }
+    },
+    "metadata": {
+        "stats_format_version": "0.3.0",
+        "mlagents_version": "1.1.0",
+        "torch_version": "2.2.2+cu121"
+    }
+}
