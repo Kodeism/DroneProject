@@ -28,8 +28,6 @@ public class ObstacleSpawner : MonoBehaviour
     [Header("Blocker")]
     [Tooltip("Closest the blocker's edge may be to the drone")]
     public float minBlockerClearance = 5f;
-    [Tooltip("Extra clearance per m/s of speed toward the target")]
-    public float reactionTime = 0.7f;
     [Tooltip("Closest the blocker's edge may be to the target")]
     public float targetMargin = 2.5f;
 

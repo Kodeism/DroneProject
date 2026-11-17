@@ -7,9 +7,6 @@ using static UnityEngine.GraphicsBuffer;
 
 public class TraningArea : MonoBehaviour
 {
-    [Tooltip("The standard spawn posistion of agent when an episode begins")]
-    public Vector3 agentSpawnPos = new Vector3(0, 50, 0);
-    public bool traningMode = true;
     public DroneAgent agent;
     public EnviormentController enviormentController;
     [SerializeField] public Vector3 Dimensions;
@@ -24,7 +21,6 @@ public class TraningArea : MonoBehaviour
     [SerializeField] private float groundThickness = 0.5f;
     [SerializeField] private ObstacleSpawner oSpawner;
     [SerializeField] private TargetSpawner tSpawner;
-    [SerializeField] public Transform area;
     public Vector3 AreaSize;
     private void OnValidate() => UpdateArea();
     public void UpdateArea()
@@ -63,8 +59,11 @@ public class TraningArea : MonoBehaviour
         }
     }
     //check if the spot is taken
-    public bool IsBlocked(Vector3 worldPos, float radius, List<LayerMask> masks)
+    public bool IsBlocked(Vector3 localPos, float radius, List<LayerMask> masks, bool ShowChecks = false)
     {
+        Vector3 worldPos = transform.TransformPoint(localPos);
+        if (ShowChecks)
+            Debug.DrawLine(worldPos, worldPos + Vector3.up * radius);
         return masks.Any(mask => Physics.CheckSphere(worldPos, radius, mask));
     }
     public bool IsBlocked(Vector3 worldPos, float radius)
@@ -84,8 +83,10 @@ public class TraningArea : MonoBehaviour
 
 
     //checks if a spot is free
-    public bool CanSpawn(Vector3 obstacleWorldPos, Vector3 droneWorldPos, Quaternion rotation, Vector3 size, float spawnClearRadius, List<LayerMask> masks, bool ShowChecks)
+    public bool CanSpawn(Vector3 obstacleLocalPos, Vector3 droneLocalPos, Quaternion rotation, Vector3 size, float spawnClearRadius, List<LayerMask> masks, bool ShowChecks)
     {
+        Vector3 obstacleWorldPos = transform.TransformPoint(obstacleLocalPos);
+        Vector3 droneWorldPos = transform.TransformPoint(droneLocalPos);
         if (TooCloseToDrone(obstacleWorldPos, droneWorldPos, size, spawnClearRadius, ShowChecks))
             return false;
         if (ShowChecks)
@@ -96,21 +97,14 @@ public class TraningArea : MonoBehaviour
     /// <summary>
     /// Respawns the agent and target to start a new episode
     /// </summary>
-    public void ResetArea(Vector3 spawnPos)
+    public void ResetArea(Vector3 spawnPos, Transform target, Vector3 velocity)
     {
-        tSpawner.PlaceTarget(spawnPos, this, enviormentController.TargetRange);
+        tSpawner.PlaceTarget(spawnPos, this, enviormentController.TargetRange, target);
         oSpawner.Randomize(spawnPos, this, enviormentController);
-        //tSpawner.ResetTargets();
-
-        if (enviormentController.BlockPath)
-            oSpawner.PlaceBlocker(agent.transform.localPosition, tSpawner.target.localPosition, agent.DroneRigidBody.velocity,this, enviormentController); //then place a blocker between target and agent
     }
 
-    public void PlaceTarget()
+    public void PlaceTarget(Vector3 spawnPos, Transform target, Vector3 velocity)
     {
-        tSpawner.PlaceTarget(agent.transform.localPosition, this, enviormentController.TargetRange);
-        if(enviormentController.BlockPath)
-            oSpawner.PlaceBlocker(agent.transform.localPosition, tSpawner.target.localPosition, agent.DroneRigidBody.velocity, this, enviormentController); //then place a blocker between target and agent
-        agent.ResetTargetProgress();
+        tSpawner.PlaceTarget(spawnPos, this, enviormentController.TargetRange, target);
     }
 }

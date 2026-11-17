@@ -17,14 +17,10 @@ public class DroneAgent : Agent
     [Header("Enviorment settings")]
     [Tooltip("The local area the drone is training in")]
     [SerializeField] private TraningArea traningArea;
-    [Tooltip("The obstacle spawner for the area")]
-    [SerializeField] private ObstacleSpawner oSpawner;
     [Tooltip("The taget the agent has to reach")]
-    [SerializeField] private TargetFloatStabil target;
+    [SerializeField] private Transform target;
     [Tooltip("The Enviorment Controller for curriculums")]
     [SerializeField] private EnviormentController enviormentController;
-    [Tooltip("The agent's camera (net yet used for anything)")]
-    public Camera agentCamera;
 
 
 
@@ -34,10 +30,6 @@ public class DroneAgent : Agent
     public Vector3 spawnPos = new Vector3(0, 50, 0);
     [Tooltip("The max speed the drone can move at")]
     public float maxSpeed = 10f;
-    [Tooltip("The max Rotationspeed the drone can move at")]
-    public float maxRotationalSpeed = 3f;
-    [Tooltip("Agent pelanty recived for large action changes")]
-    public float actionChangePenalty = 0.05f;
     [Tooltip("Agent pelanty recived for spinning too much")]
     public float spinPenalty = 0.002f;
     [SerializeField] private float progressMilestoneDistance = 1f;
@@ -48,28 +40,15 @@ public class DroneAgent : Agent
     public bool trainingMode;
     [Tooltip("Whether the drone can land on the ground or not")]
     public bool groundIsLava;
-    [Tooltip("Whether an obstacle should be placed as a blocker")]
-    public bool placeBlocker;
 
 
 
-
-    [Header(" ")]
-    [Header("Battery Properties")]
-    [Tooltip("The capacity of the drone's battery (not yet implemented)")]
-    public float batteryCapacity = 100.0f;
-    [Tooltip("The rate at which the drone's battery drains (not yet implemented)")]
-    public float batteryDrainRate = 0.0f;
 
 
     [Header(" ")]
     [Header("Target-to-agent settings")]
     [Tooltip("The radius around the target the agent has to be within to get it")]
     public float reachRadius = 1f;
-    [Tooltip("The the max distance the target can be spawned at from agent")]
-    public float targetRange = 5f;
-    [Tooltip("The max distance the agent can fly from the target before the epsiode ends")]
-    public float maxDist = 20f;
 
     [Header(" ")]
     [Tooltip("The drone controller that manages the drone's physics and movement.")]
@@ -108,7 +87,11 @@ public class DroneAgent : Agent
     private float bestDistance;
 
 
-
+    [ContextMenu("Reset Drone Agent")]
+    public void ResetOption()
+    {
+        EndEpisode();
+    }
     #region Initializing and Updating
 
 
@@ -122,7 +105,7 @@ public class DroneAgent : Agent
         traningArea = GetComponentInParent<TraningArea>();
         enviormentController = GetComponentInParent<EnviormentController>();
         enviormentController.UpdateDifficultyLevel();
-        traningArea.ResetArea(spawnPos);
+        traningArea.ResetArea(spawnPos, target, DroneRigidBody.velocity);
         //if not in training mode, no max step, play forever
         if (!trainingMode)
         {
@@ -136,7 +119,7 @@ public class DroneAgent : Agent
     /// </summary>
     private void Update()
     {
-        //Nothing for now, the drone controller handles the physics and movement of the drone
+        
     }
 
 
@@ -230,11 +213,11 @@ public class DroneAgent : Agent
     /// </summary>
     public override void OnEpisodeBegin()
     {
-            enviormentController.UpdateDifficultyLevel();
-            RespawnAgent();
-            traningArea.ResetArea(spawnPos);
-            //droneController.RandomizeMotors(0.5f, 0.9f, 0.02f, 0.05f);
-            ResetTargetProgress();
+        enviormentController.UpdateDifficultyLevel();
+        RespawnAgent();
+        traningArea.ResetArea(spawnPos, target, DroneRigidBody.velocity);
+        ResetTargetProgress();
+        //droneController.RandomizeMotors(0.5f, 0.9f, 0.02f, 0.05f);
     }
     /// <summary>
     /// Respawns the agent and target to start a new episode
@@ -323,7 +306,8 @@ public class DroneAgent : Agent
         if (dist < reachRadius)
         {
             AddReward(5f);
-            traningArea.PlaceTarget();
+            traningArea.PlaceTarget(spawnPos, target, DroneRigidBody.velocity);
+            ResetTargetProgress();
             //Debug.Log($"Rewarded for reaching target. Distance: {dist}. Reward: {5f}");
         }
 

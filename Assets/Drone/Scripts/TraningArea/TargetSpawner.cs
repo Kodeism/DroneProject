@@ -6,13 +6,13 @@ using static UnityEngine.GraphicsBuffer;
 
 public class TargetSpawner : MonoBehaviour
 {
-    public Transform target;
-    public float reachRadius = 1f;
-
+    public float clearRadius = 1f;
+    [SerializeField] public List<LayerMask> layerMasks = new List<LayerMask>();
+    public bool showChecks = false;
     /// <summary>
     /// Tries to place the target and blockers near the agent.
     /// </summary>
-    public void PlaceTarget(Vector3 droneLocalPos,TraningArea traningArea, float targetRange)
+    public void PlaceTarget(Vector3 droneLocalPos,TraningArea traningArea, float targetRange, Transform target)
     {
         //Debug.Log("target being placed " + GetCumulativeReward() + "(time scale: " + Time.timeScale + ")");
         //tries to place the target 
@@ -29,7 +29,7 @@ public class TargetSpawner : MonoBehaviour
             if (!(candidate.x < 95 && candidate.x > -95) || !(candidate.z < 95 && candidate.z > -95) || !(candidate.y < 188 && candidate.y > 2))
                 continue;
 
-            if (!traningArea.IsBlocked(candidate, reachRadius + 0.5f))
+            if (!traningArea.IsBlocked(candidate, target.localScale.x * 0.5f + clearRadius, layerMasks, showChecks))
             {
                 target.transform.localPosition = candidate;
                 break;
